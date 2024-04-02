@@ -38,20 +38,20 @@ def getTeamDif(expect, actual):
 
 # This function should calculated the Euclidian distance between two datapoints.
 def euclidian_distance(dp1, dp2):
-  # Write your code here!
+
   teams1 = getTeams(dp1)
   teams2 = getTeams(dp2)
 
-
+  x1 = getTeamDif(set(teams1[0]), teams2)
+  x2 = getTeamDif(set(teams1[1]), teams2)
   
-  return np.sqrt(np.sum([(x1-y1) ** 2, (x2-y2)**2]))
+  return np.sqrt(np.sum([(x1) ** 2, (x2)**2]))
 
 # This function should get the k nearest neighbors for a new datapoint.
 def get_neighbors(x_train, new_dp, k):
   distances = []
   neighbors = []
   
-  # Write your code here!
   for index, datapoint in x_train.iterrows():
     distances.append((index, euclidian_distance(new_dp, datapoint)))
   distances.sort(key=lambda x: x[1])

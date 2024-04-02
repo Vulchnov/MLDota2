@@ -13,35 +13,37 @@ Y = load_dataset('dota2Labels.csv')
 
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=17)
 
-def normalize_feature(data, feature):
-  feature_set = data[feature]
-  mini = np.min(feature_set)
-  maxi = np.max(feature_set)
+#This function returns a touple that contains two lists, one for each team
+def getTeams(match):
+  teams = ([], [])
+  for i in range(4, len(match)):
+    if match[i] == 1:
+      teams[0].append(i-3)
+    elif match[i] == -1:
+      teams[0].append(i-3)
+  return teams
 
-  for val in feature_set:
-    val = (val-mini)/(maxi-mini)
-  
-  return feature_set
+def getTeamDif(expect, actual):
+  try1 = 0
+  try2 = 0
+  for member in actual[0]:
+    if not member in expect:
+      try1 +=1
 
-# This function should standardize a feature (column) of a dataset.
-def standardize_feature(data, feature):
-  feature_set = data[feature]
-  std = np.std(feature_set)
-  mean = np.mean(feature_set)
+  for member in actual[1]:
+    if not member in expect:
+      try2 +=1
 
-  for val in feature_set:
-    val = (val-mean)/std
-  
-  return feature_set
-
+  return min(try1, try2)
 
 # This function should calculated the Euclidian distance between two datapoints.
 def euclidian_distance(dp1, dp2):
   # Write your code here!
-  x1 = int(dp1["budget"])
-  x2 = int(dp1["revenue"])
-  y1 = int(dp2["budget"])
-  y2 = int(dp2["revenue"])
+  teams1 = getTeams(dp1)
+  teams2 = getTeams(dp2)
+
+
+  
   return np.sqrt(np.sum([(x1-y1) ** 2, (x2-y2)**2]))
 
 # This function should get the k nearest neighbors for a new datapoint.

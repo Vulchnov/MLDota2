@@ -84,11 +84,11 @@ def get_neighbors(x_train, new_dp, k):
   
 # This function should determine the class label for the current datapoint
 # based on the majority of class labels of its k neighbors.
-def predict_dp(neighbors, y_train):
+def predict_dp(neighbors, x_train):
   predictions = None
   
   # Write your code here!
-  neighbor_labels = [y_train.loc[i] for i in neighbors]
+  neighbor_labels = [x_train.loc[i] for i in neighbors]
   print(neighbor_labels)
   unique_labels, counts = np.unique(neighbor_labels, return_counts=True)
   predictions = unique_labels[np.argmax(counts)]
@@ -101,7 +101,7 @@ k = 3
 predictions = []
 for index, row in x_test.iterrows():
   neighbors_indices = get_neighbors(x_train, row, k)
-  predicted_label = predict_dp(neighbors_indices, y_train)
+  predicted_label = predict_dp(neighbors_indices, x_train)
   predictions.append(predicted_label)
   
 

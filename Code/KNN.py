@@ -13,16 +13,37 @@ Y = load_dataset('dota2Labels.csv')
 
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=17)
 
-#This function returns a touple that contains two lists, one for each team
+#This function returns a touple that contains two lists with the champ ids for each team
 def getTeams(match):
+  '''
+  multiply values in match by result. This will transform the match data in such a way that is 
+  will represent the winning team comp vs the losing team comp, allowing for a comparison that will
+  yield the most ideal team comp
+  '''
+  result = match[0] #get the result of a match (1 or -1)
+  match = [i*result for i in match]
+  '''
+  #possible revision, I put it in comments as to not break anything irreversibly
+  match = match[4:] #isolate the champions
+  #match = [i*result for i in match[4:]] #this should complete both transformations in one line uncomment to implement
+  teams = ([], [])
+  for champ in match:
+    if champ == 1:
+      teams[0].append(champ)
+    elif champ == -1:
+      teams[1].append(champ) #this was appending to red team, possible fix?
+  return teams
+  '''
+  
   teams = ([], [])
   for i in range(4, len(match)):
     if match[i] == 1:
       teams[0].append(i-3)
     elif match[i] == -1:
-      teams[0].append(i-3)
+      teams[0].append(i-3) #should this be teams[1]?
   return teams
 
+#compare the team comp of a training dp to the team comp of a test dp)
 def getTeamDif(expect, actual):
   try1 = 0
   try2 = 0
@@ -36,7 +57,7 @@ def getTeamDif(expect, actual):
 
   return min(try1, try2)
 
-# This function should calculated the Euclidian distance between two datapoints.
+# This function should calculated the Euclidian distance (team comp similarity) between two datapoints.
 def euclidian_distance(dp1, dp2):
 
   teams1 = getTeams(dp1)

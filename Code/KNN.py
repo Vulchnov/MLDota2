@@ -81,7 +81,6 @@ def get_neighbors(x_train, new_dp, k):
 def predict_dp(neighbors, x_train):
   predictions = None
   
-  # Write your code here!
   neighbor_labels = [x_train.loc[i] for i in neighbors]
   print(neighbor_labels)
   unique_labels, counts = np.unique(neighbor_labels, return_counts=True)
@@ -98,7 +97,6 @@ for index, row in x_test.iterrows():
   predicted_label = predict_dp(neighbors_indices, x_train)
   predictions.append(predicted_label)
   print(f"prediction made {predicted_label}")
-  
 
 # Calculate and print out the accuracy of your predictions!
 correct = sum([y_true == y_pred for y_true, y_pred in zip(y_test, predictions)])

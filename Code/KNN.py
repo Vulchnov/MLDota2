@@ -8,33 +8,27 @@ from sklearn.metrics import mean_squared_error
 def load_dataset(filename):
   return pd.read_csv(filename)
 
-X = load_dataset('dota2Train.csv')
-Y = load_dataset('dota2Labels.csv')
+X = load_dataset('Code\\dota2Train.csv')
+Y = load_dataset('Code\\dota2Labels.csv')
 
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=17)
 
 #This function returns a touple that contains two lists with the champ ids for each team
 def getTeams(match):
-  '''
-  multiply values in match by result. This will transform the match data in such a way that is 
-  will represent the winning team comp vs the losing team comp, allowing for a comparison that will
-  yield the most ideal team comp
-  '''
-  result = match[0] #get the result of a match (1 or -1)
-  match = [i*result for i in match]
-  '''
-  #possible revision, I put it in comments as to not break anything irreversibly
+  result = match.iloc[0] #get the result of a match (1 or -1)
   match = match[4:] #isolate the champions
-  #match = [i*result for i in match[4:]] #this should complete both transformations in one line uncomment to implement
   teams = ([], [])
+
+  champID = 1 #The ChampIDs are 1-based indexed
   for champ in match:
+    champ *= result #Transforms data such that the champ is either on the winning or losing team
     if champ == 1:
-      teams[0].append(champ)
+      teams[0].append(champID)
     elif champ == -1:
-      teams[1].append(champ) #this was appending to red team, possible fix?
+      teams[1].append(champID)
+    champID +=1
   return teams
-  '''
-  
+'''
   teams = ([], [])
   for i in range(4, len(match)):
     if match[i] == 1:
@@ -42,7 +36,7 @@ def getTeams(match):
     elif match[i] == -1:
       teams[0].append(i-3) #should this be teams[1]?
   return teams
-
+'''
 #compare the team comp of a training dp to the team comp of a test dp)
 def getTeamDif(expect, actual):
   try1 = 0
@@ -103,6 +97,7 @@ for index, row in x_test.iterrows():
   neighbors_indices = get_neighbors(x_train, row, k)
   predicted_label = predict_dp(neighbors_indices, x_train)
   predictions.append(predicted_label)
+  print(f"prediction made {predicted_label}")
   
 
 # Calculate and print out the accuracy of your predictions!

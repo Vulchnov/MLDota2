@@ -15,18 +15,15 @@ x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_
 
 #This function returns a touple that contains two lists with the champ ids for each team
 def getTeams(match):
-  result = match.iloc[0] #get the result of a match (1 or -1)
-  match = match[4:] #isolate the champions
+  #result = match.iloc[0] #get the result of a match (1 or -1)
   teams = ([], [])
-
-  champID = 1 #The ChampIDs are 1-based indexed
-  for champ in match:
-    champ *= result #Transforms data such that the champ is either on the winning or losing team
-    if champ == 1:
+  match = match[4:] #isolate the champion IDs
+  for champID in range(len(match)):
+    #champ *= result #Transforms data such that the champ is either on the winning or losing team
+    if match[champID] == 1:
       teams[0].append(champID)
-    elif champ == -1:
+    elif match[champID] == -1:
       teams[1].append(champID)
-    champID +=1
   return teams
 '''
   teams = ([], [])

@@ -5,6 +5,7 @@ import math
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
+import time
 
 def load_dataset(filename):
   return pd.read_csv(filename)
@@ -107,11 +108,21 @@ def predict_dp(neighbors, x_train):
 # with k = 3
 k = 3
 predictions = []
+print("----------Calculating knn predictions for test set----------")
 for index, row in x_test.iterrows():
+  start = time.time()
   neighbors_indices = get_neighbors(x_train, row, k)
+  end = time.time()
+  print(f"execution time for getNeighbors(): {(end-start)} s")
   predicted_label = predict_dp(neighbors_indices, x_train)
   predictions.append(predicted_label)
-  print(f"prediction made {predicted_label}")
+  print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
+
+  if(row.iloc[0] == predicted_label):
+    print("CORRECT PREDICTION")
+  else:
+    print("you actually threw you moron go 0/1/0 irl")
+
 
 # Calculate and print out the accuracy of your predictions!
 correct = sum([y_true == y_pred for y_true, y_pred in zip(y_test, predictions)])

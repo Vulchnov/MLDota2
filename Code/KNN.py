@@ -8,12 +8,7 @@ from sklearn.metrics import mean_squared_error
 import time
 
 def load_dataset(filename):
-  return pd.read_csv(filename)
-
-X = load_dataset('Code\\dota2Train.csv')
-Y = load_dataset('Code\\dota2Labels.csv')
-
-x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=17)
+    return pd.read_csv(filename)
 
 #This function returns a touple that contains two lists with the champ ids for each team
 def getTeams(match):
@@ -53,6 +48,7 @@ def getTeamDif(expect, actual):
       try2 +=1
 
   return min(try1, try2)
+  #return min(len([not member in expect for member in actual[0]]), len([not member in expect for member in actual[1]]))
 
 # This function should calculated the Euclidian distance (team comp similarity) between two datapoints.
 def euclidian_distance(dp1, dp2):
@@ -91,7 +87,7 @@ def get_neighbors(x_train, new_dp, k):
 
   #distances.sort(key=lambda x: x[1])
   for i in range(k):
-    print(distances[i][0])
+    #print(distances[i][0])
     neighbors.append(distances[i][0])
   
   return neighbors
@@ -102,79 +98,85 @@ def predict_dp(neighbors, x_train):
   predictions = None
   
   neighbor_labels = [x_train.loc[i][0] for i in neighbors]
-  print(neighbor_labels)
+  #print(neighbor_labels)
   unique_labels, counts = np.unique(neighbor_labels, return_counts=True)
   predictions = unique_labels[np.argmax(counts)]
   
   return predictions
 
-# Use the kNN algorithm to predict the class labels of the test set
-# with k = 3
-k = 3
-print("----------Calculating knn predictions for test set k = 3----------")
-loop = 0
-with open("k3.txt", "w") as f:
-  for index, row in x_test.iterrows():
-    start = time.time()
-    neighbors_indices = get_neighbors(x_train, row, k)
-    end = time.time()
-    print(f"execution time for getNeighbors(): {(end-start)} s")
-    predicted_label = predict_dp(neighbors_indices, x_train)
-    print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
+if __name__ == "__main__":
+  X = load_dataset('Code\\dota2Train.csv')
+  Y = load_dataset('Code\\dota2Labels.csv')
 
-    if(row.iloc[0] == predicted_label):
-      print("CORRECT PREDICTION")
-      f.write("1\n")
-    else:
-      print("you actually threw you moron go 0/1/0 irl")
-      f.write("0\n")
-    if (loop >= 1000):
-      break
-    else: 
-      loop += 1
+  x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=17)
 
-k = 5
-print("----------Calculating knn predictions for test set k = 5----------")
-loop = 0
-with open("k5.txt", "w") as f:
-  for index, row in x_test.iterrows():
-    start = time.time()
-    neighbors_indices = get_neighbors(x_train, row, k)
-    end = time.time()
-    print(f"execution time for getNeighbors(): {(end-start)} s")
-    predicted_label = predict_dp(neighbors_indices, x_train)
-    print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
+  # Use the kNN algorithm to predict the class labels of the test set
+  # with k = 3
+  k = 3
+  print("----------Calculating knn predictions for test set k = 3----------")
+  loop = 0
+  with open("k3.txt", "w") as f:
+    for index, row in x_test.iterrows():
+      start = time.time()
+      neighbors_indices = get_neighbors(x_train, row, k)
+      end = time.time()
+      print(f"execution time for getNeighbors(): {(end-start)} s")
+      predicted_label = predict_dp(neighbors_indices, x_train)
+      print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
 
-    if(row.iloc[0] == predicted_label):
-      print("CORRECT PREDICTION")
-      f.write("1\n")
-    else:
-      print("you actually threw you moron go 0/1/0 irl")
-      f.write("0\n")
-    if (loop >= 1000):
-      break
-    else: 
-      loop += 1
+      if(row.iloc[0] == predicted_label):
+        print("CORRECT PREDICTION")
+        f.write("1\n")
+      else:
+        print("you actually threw you moron go 0/1/0 irl")
+        f.write("0\n")
+      if (loop >= 1000):
+        break
+      else: 
+        loop += 1
 
-k = 10
-print("----------Calculating knn predictions for test set k = 10----------")
-loop = 0
-with open("k10.txt", "w") as f:
-  for index, row in x_test.iterrows():
-    start = time.time()
-    neighbors_indices = get_neighbors(x_train, row, k)
-    end = time.time()
-    print(f"execution time for getNeighbors(): {(end-start)} s")
-    predicted_label = predict_dp(neighbors_indices, x_train)
-    print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
+  k = 5
+  print("----------Calculating knn predictions for test set k = 5----------")
+  loop = 0
+  with open("k5.txt", "w") as f:
+    for index, row in x_test.iterrows():
+      start = time.time()
+      neighbors_indices = get_neighbors(x_train, row, k)
+      end = time.time()
+      print(f"execution time for getNeighbors(): {(end-start)} s")
+      predicted_label = predict_dp(neighbors_indices, x_train)
+      print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
 
-    if(row.iloc[0] == predicted_label):
-      print("CORRECT PREDICTION")
-      f.write("1\n")
-    else:
-      print("you actually threw you moron go 0/1/0 irl")
-      f.write("0\n")
-    if (loop >= 1000):
-      break
-    else: 
-      loop += 1
+      if(row.iloc[0] == predicted_label):
+        print("CORRECT PREDICTION")
+        f.write("1\n")
+      else:
+        print("you actually threw you moron go 0/1/0 irl")
+        f.write("0\n")
+      if (loop >= 1000):
+        break
+      else: 
+        loop += 1
+
+  k = 10
+  print("----------Calculating knn predictions for test set k = 10----------")
+  loop = 0
+  with open("k10.txt", "w") as f:
+    for index, row in x_test.iterrows():
+      start = time.time()
+      neighbors_indices = get_neighbors(x_train, row, k)
+      end = time.time()
+      print(f"execution time for getNeighbors(): {(end-start)} s")
+      predicted_label = predict_dp(neighbors_indices, x_train)
+      print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
+
+      if(row.iloc[0] == predicted_label):
+        print("CORRECT PREDICTION")
+        f.write("1\n")
+      else:
+        print("you actually threw you moron go 0/1/0 irl")
+        f.write("0\n")
+      if (loop >= 1000):
+        break
+      else: 
+        loop += 1

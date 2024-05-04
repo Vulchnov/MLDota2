@@ -18,8 +18,10 @@ x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_
 #This function returns a touple that contains two lists with the champ ids for each team
 def getTeams(match):
   #result = match.iloc[0] #get the result of a match (1 or -1)
-  teams = ([], [])
   match = match[4:] #isolate the champion IDs
+  teams = ([champID for champID, i in enumerate(match) if i == 1], [champID for champID, i in enumerate(match) if i == -1])
+  return teams
+  '''
   for champID in range(len(match)):
     #champ *= result #Transforms data such that the champ is either on the winning or losing team
     if match[champID] == 1:
@@ -27,15 +29,17 @@ def getTeams(match):
     elif match[champID] == -1:
       teams[1].append(champID)
   return teams
-'''
-  teams = ([], [])
-  for i in range(4, len(match)):
-    if match[i] == 1:
-      teams[0].append(i-3)
-    elif match[i] == -1:
-      teams[0].append(i-3) #should this be teams[1]?
-  return teams
-'''
+  '''
+
+  '''
+    teams = ([], [])
+    for i in range(4, len(match)):
+      if match[i] == 1:
+        teams[0].append(i-3)
+      elif match[i] == -1:
+        teams[0].append(i-3) #should this be teams[1]?
+    return teams
+  '''
 #compare the team comp of a training dp to the team comp of a test dp)
 def getTeamDif(expect, actual):
   try1 = 0
@@ -73,7 +77,7 @@ def get_neighbors(x_train, new_dp, k):
     max_dp_index = 0
 
     #OPTIMIZATION - Discard neighbors that aren't k nearest to new_dp
-    for i in range(len(distances)): #get the point with the highest distance in distances
+    for i in range(k): #get the point with the highest distance in distances
       distance = distances[i][1]
       #print(f"i: {i} distance: {distance}")
       if distance > max_distance:
@@ -107,24 +111,70 @@ def predict_dp(neighbors, x_train):
 # Use the kNN algorithm to predict the class labels of the test set
 # with k = 3
 k = 3
-predictions = []
-print("----------Calculating knn predictions for test set----------")
-for index, row in x_test.iterrows():
-  start = time.time()
-  neighbors_indices = get_neighbors(x_train, row, k)
-  end = time.time()
-  print(f"execution time for getNeighbors(): {(end-start)} s")
-  predicted_label = predict_dp(neighbors_indices, x_train)
-  predictions.append(predicted_label)
-  print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
+print("----------Calculating knn predictions for test set k = 3----------")
+loop = 0
+with open("k3.txt", "w") as f:
+  for index, row in x_test.iterrows():
+    start = time.time()
+    neighbors_indices = get_neighbors(x_train, row, k)
+    end = time.time()
+    print(f"execution time for getNeighbors(): {(end-start)} s")
+    predicted_label = predict_dp(neighbors_indices, x_train)
+    print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
 
-  if(row.iloc[0] == predicted_label):
-    print("CORRECT PREDICTION")
-  else:
-    print("you actually threw you moron go 0/1/0 irl")
+    if(row.iloc[0] == predicted_label):
+      print("CORRECT PREDICTION")
+      f.write("1\n")
+    else:
+      print("you actually threw you moron go 0/1/0 irl")
+      f.write("0\n")
+    if (loop >= 1000):
+      break
+    else: 
+      loop += 1
 
+k = 5
+print("----------Calculating knn predictions for test set k = 5----------")
+loop = 0
+with open("k5.txt", "w") as f:
+  for index, row in x_test.iterrows():
+    start = time.time()
+    neighbors_indices = get_neighbors(x_train, row, k)
+    end = time.time()
+    print(f"execution time for getNeighbors(): {(end-start)} s")
+    predicted_label = predict_dp(neighbors_indices, x_train)
+    print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
 
-# Calculate and print out the accuracy of your predictions!
-correct = sum([y_true == y_pred for y_true, y_pred in zip(y_test, predictions)])
-accuracy = (correct / len(y_test)) * 100
-print(f"Accuracy: {accuracy:.2f}%")
+    if(row.iloc[0] == predicted_label):
+      print("CORRECT PREDICTION")
+      f.write("1\n")
+    else:
+      print("you actually threw you moron go 0/1/0 irl")
+      f.write("0\n")
+    if (loop >= 1000):
+      break
+    else: 
+      loop += 1
+
+k = 10
+print("----------Calculating knn predictions for test set k = 10----------")
+loop = 0
+with open("k10.txt", "w") as f:
+  for index, row in x_test.iterrows():
+    start = time.time()
+    neighbors_indices = get_neighbors(x_train, row, k)
+    end = time.time()
+    print(f"execution time for getNeighbors(): {(end-start)} s")
+    predicted_label = predict_dp(neighbors_indices, x_train)
+    print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
+
+    if(row.iloc[0] == predicted_label):
+      print("CORRECT PREDICTION")
+      f.write("1\n")
+    else:
+      print("you actually threw you moron go 0/1/0 irl")
+      f.write("0\n")
+    if (loop >= 1000):
+      break
+    else: 
+      loop += 1

@@ -1,6 +1,7 @@
 # Import necessary packages here.
 import pandas as pd
 import numpy as np
+import math
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
@@ -64,9 +65,26 @@ def get_neighbors(x_train, new_dp, k):
   distances = []
   neighbors = []
   
+  distances = [(i, math.inf) for i in range(k)]
+  
   for index, datapoint in x_train.iterrows():
-    distances.append((index, euclidian_distance(new_dp, datapoint)))
-  distances.sort(key=lambda x: x[1])
+    max_distance = distances[0][1]
+    max_dp_index = 0
+
+    #OPTIMIZATION - Discard neighbors that aren't k nearest to new_dp
+    for i in range(len(distances)): #get the point with the highest distance in distances
+      distance = distances[i][1]
+      #print(f"i: {i} distance: {distance}")
+      if distance > max_distance:
+        max_distance = distance
+        max_dp_index = i
+
+    #print(f"max_dp_index: {max_dp_index} index:{index} max_distance: {max_distance}")
+    new_dp_distance = euclidian_distance(new_dp, datapoint) #get euclidean distance of new datapoint
+    if new_dp_distance < max_distance:
+      distances[max_dp_index] = (index, new_dp_distance)
+
+  #distances.sort(key=lambda x: x[1])
   for i in range(k):
     print(distances[i][0])
     neighbors.append(distances[i][0])
@@ -78,7 +96,7 @@ def get_neighbors(x_train, new_dp, k):
 def predict_dp(neighbors, x_train):
   predictions = None
   
-  neighbor_labels = [x_train.loc[i] for i in neighbors]
+  neighbor_labels = [x_train.loc[i][0] for i in neighbors]
   print(neighbor_labels)
   unique_labels, counts = np.unique(neighbor_labels, return_counts=True)
   predictions = unique_labels[np.argmax(counts)]

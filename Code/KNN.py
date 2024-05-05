@@ -10,8 +10,8 @@ import time
 def load_dataset(filename):
   return pd.read_csv(filename)
 
-X = load_dataset('Code\\dota2Train.csv')
-Y = load_dataset('Code\\dota2Labels.csv')
+X = load_dataset('dota2Train.csv')
+Y = load_dataset('dota2Labels.csv')
 
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=17)
 
@@ -91,7 +91,6 @@ def get_neighbors(x_train, new_dp, k):
 
   #distances.sort(key=lambda x: x[1])
   for i in range(k):
-    print(distances[i][0])
     neighbors.append(distances[i][0])
   
   return neighbors
@@ -109,57 +108,12 @@ def predict_dp(neighbors, x_train):
   return predictions
 
 # Use the kNN algorithm to predict the class labels of the test set
-# with k = 3
-k = 3
-print("----------Calculating knn predictions for test set k = 3----------")
-loop = 0
-with open("k3.txt", "w") as f:
-  for index, row in x_test.iterrows():
-    start = time.time()
-    neighbors_indices = get_neighbors(x_train, row, k)
-    end = time.time()
-    print(f"execution time for getNeighbors(): {(end-start)} s")
-    predicted_label = predict_dp(neighbors_indices, x_train)
-    print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
-
-    if(row.iloc[0] == predicted_label):
-      print("CORRECT PREDICTION")
-      f.write("1\n")
-    else:
-      print("you actually threw you moron go 0/1/0 irl")
-      f.write("0\n")
-    if (loop >= 1000):
-      break
-    else: 
-      loop += 1
+# with k = 5
 
 k = 5
 print("----------Calculating knn predictions for test set k = 5----------")
 loop = 0
 with open("k5.txt", "w") as f:
-  for index, row in x_test.iterrows():
-    start = time.time()
-    neighbors_indices = get_neighbors(x_train, row, k)
-    end = time.time()
-    print(f"execution time for getNeighbors(): {(end-start)} s")
-    predicted_label = predict_dp(neighbors_indices, x_train)
-    print(f"PREDICTION FOR DATAPOINT {index}:  {predicted_label}")
-
-    if(row.iloc[0] == predicted_label):
-      print("CORRECT PREDICTION")
-      f.write("1\n")
-    else:
-      print("you actually threw you moron go 0/1/0 irl")
-      f.write("0\n")
-    if (loop >= 1000):
-      break
-    else: 
-      loop += 1
-
-k = 10
-print("----------Calculating knn predictions for test set k = 10----------")
-loop = 0
-with open("k10.txt", "w") as f:
   for index, row in x_test.iterrows():
     start = time.time()
     neighbors_indices = get_neighbors(x_train, row, k)

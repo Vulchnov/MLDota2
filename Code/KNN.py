@@ -3,8 +3,6 @@ import pandas as pd
 import numpy as np
 import math
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
 import time
 
 def load_dataset(filename):
@@ -31,15 +29,6 @@ def getTeams(match):
   return teams
   '''
 
-  '''
-    teams = ([], [])
-    for i in range(4, len(match)):
-      if match[i] == 1:
-        teams[0].append(i-3)
-      elif match[i] == -1:
-        teams[0].append(i-3) #should this be teams[1]?
-    return teams
-  '''
 #compare the team comp of a training dp to the team comp of a test dp)
 def getTeamDif(expect, actual):
   try1 = 0
@@ -51,8 +40,11 @@ def getTeamDif(expect, actual):
   for member in actual[1]:
     if not member in expect:
       try2 +=1
-
-  return min(try1, try2)
+  
+  if try1 < try2:
+    return (try1, 1)
+  else:
+    return (try2, -1)
 
 # This function should calculated the Euclidian distance (team comp similarity) between two datapoints.
 def euclidian_distance(dp1, dp2):
@@ -60,8 +52,8 @@ def euclidian_distance(dp1, dp2):
   teams1 = getTeams(dp1)
   teams2 = getTeams(dp2)
 
-  x1 = getTeamDif(set(teams1[0]), teams2)
-  x2 = getTeamDif(set(teams1[1]), teams2)
+  x1 = getTeamDif(set(teams1[0]), teams2)[0]
+  x2 = getTeamDif(set(teams1[1]), teams2)[0]
   
   return np.sqrt(np.sum([(x1) ** 2, (x2)**2]))
 

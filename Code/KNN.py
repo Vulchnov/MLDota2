@@ -8,8 +8,8 @@ import time
 def load_dataset(filename):
   return pd.read_csv(filename)
 
-x_train = load_dataset('dota2TrainMOD.csv')
-x_test = load_dataset('dota2Test.csv')
+x_train = load_dataset('Code\\dota2TrainMOD.csv')
+x_test = load_dataset('Code\\dota2Test.csv')
 
 #This function returns a touple that contains two lists with the champ ids for each team
 def getTeams(match):
@@ -77,15 +77,17 @@ def get_neighbors(x_train, new_dp, k):
     #print(f"max_dp_index: {max_dp_index} index:{index} max_distance: {max_distance}")
     teams1 = getTeams(new_dp)
     teams2 = getTeams(datapoint)
+    if(len(teams2[0]) == 5 and len(teams2[1]) == 5):
+      x1 = getTeamDif(set(teams1[0]), teams2)[1]
 
-    x1 = getTeamDif(set(teams1[0]), teams2)[1]
-
-    new_dp_distance = euclidian_distance(teams1, teams2) #get euclidean distance of new datapoint
-    if new_dp_distance < max_distance:
-      distances[max_dp_index] = (x1, new_dp_distance)
-
+      new_dp_distance = euclidian_distance(teams1, teams2) #get euclidean distance of new datapoint
+      if new_dp_distance < max_distance:
+        distances[max_dp_index] = (x1, new_dp_distance, teams2)
+  print(f"Match Tested: {getTeams(new_dp)}")
   #distances.sort(key=lambda x: x[1])
   for i in range(k):
+    x = (distances[i][2])
+    print(f"Neighbor {i+1}: {x}")
     neighbors.append(distances[i][0])
   
   return neighbors

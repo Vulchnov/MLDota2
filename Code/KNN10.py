@@ -102,10 +102,10 @@ def predict_dp(neighbors):
 # Use the kNN algorithm to predict the class labels of the test set
 # with k = 5
 
-k = 5
-print("----------Calculating knn predictions for test set k = 5----------")
+k = 10
+print("----------Calculating knn predictions for test set k = 10----------")
 loop = 0
-with open("k5.txt", "w") as f:
+with open("k10.txt", "w") as f:
   for index, row in x_test.iterrows():
     start = time.time()
     neighbors_indices = get_neighbors(x_train, row, k)

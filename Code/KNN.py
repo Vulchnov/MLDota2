@@ -106,7 +106,6 @@ def predict_dp(neighbors):
 
 k = 5
 print("----------Calculating knn predictions for test set k = 5----------")
-loop = 0
 with open("k5.txt", "w") as f:
   for index, row in x_test.iterrows():
     start = time.time()
@@ -122,7 +121,3 @@ with open("k5.txt", "w") as f:
     else:
       print("Wrong Prediction")
       f.write("0\n")
-    if (loop >= 1000):
-      break
-    else: 
-      loop += 1
